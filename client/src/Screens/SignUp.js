@@ -59,7 +59,6 @@ export default function SignUp() {
   const [role, setRole] = useState("employee");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
 
   const handleRole = (event, newRole) => {
     setRole(newRole);
@@ -118,14 +117,13 @@ export default function SignUp() {
           company,
           role,
         });
-        setSuccess(data?.message);
+        alert(data?.message);
         setLoading(false);
       } else {
         const { data } = await axios.post(
           "/api/users/registerEmployee",
           userData
         );
-        setSuccess(data?.message);
         alert(data?.message);
         setLoading(false);
       }

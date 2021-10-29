@@ -7,7 +7,8 @@ import { AuthProvider } from "./Contexts/AuthContext";
 import { OrgProvider } from "./Contexts/OrgContaxt";
 import axios from "axios";
 
-axios.defaults.baseURL = "http://localhost:5000";
+// axios.defaults.baseURL = "http://localhost:5000";
+axios.defaults.baseURL = "https://easeit-api.herokuapp.com";
 
 ReactDOM.render(
   <React.StrictMode>
