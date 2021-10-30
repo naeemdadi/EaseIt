@@ -16,7 +16,7 @@ dotenv.config();
 const app = express();
 
 // Set up a whitelist and check against it:
-// var whitelist = ["https://easeit.netlify.app"];
+var whitelist = ["https://easeit.netlify.app"];
 // var corsOptions = {
 //   origin: function (origin, callback) {
 //     if (whitelist.indexOf(origin) !== -1) {
@@ -27,22 +27,18 @@ const app = express();
 //   },
 //   credentials: true,
 // };
+var corsOptions = {
+  origin: true,
+  credentials: true,
+};
 
 // Middlewares
-// app.use(cors(corsOptions));
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json()); // to support JSON-encoded bodies
 app.use(express.urlencoded({ extended: true })); // to support URL-encoded bodies
 
 // in latest body-parser use like below.
 app.use(passport.initialize());
-
-// app.use((req, res, next) => {
-//   res.header("Access-Control-Allow-Origin", "*");
-//   res.header("Access-Control-Allow-Methods", "GET , PUT , POST , DELETE");
-//   res.header("Access-Control-Allow-Headers", "Content-Type, x-requested-with");
-//   next(); // Important
-// });
 
 require("./middlewares/passport")(passport);
 

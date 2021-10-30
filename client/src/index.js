@@ -8,8 +8,7 @@ import { OrgProvider } from "./Contexts/OrgContaxt";
 import axios from "axios";
 
 // axios.defaults.baseURL = "http://localhost:5000";
-axios.defaults.baseURL =
-  "https://cors-anywhere-naeem.herokuapp.com/https://easeit-api.herokuapp.com";
+axios.defaults.baseURL = "/https://easeit-api.herokuapp.com";
 
 ReactDOM.render(
   <React.StrictMode>
