@@ -16,20 +16,21 @@ dotenv.config();
 const app = express();
 
 // Set up a whitelist and check against it:
-let whitelist = ["https://easeit.netlify.app"];
-let corsOptions = {
-  origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
+var allowlist = ["http://example1.com", "http://example2.com"];
+var corsOptionsDelegate = function (req, callback) {
+  var corsOptions;
+  if (allowlist.indexOf(req.header("Origin")) !== -1) {
+    corsOptions = { origin: true }; // reflect (enable) the requested origin in the CORS response
+  } else {
+    corsOptions = { origin: false }; // disable CORS for this request
+  }
+  callback(null, corsOptions); // callback expects two parameters: error and options
 };
 
+app.options("*", cors()); // include before other routes
+
 // Middlewares
-app.use(cors(corsOptions));
+app.use(cors(corsOptionsDelegate));
 app.use(express.json()); // to support JSON-encoded bodies
 app.use(express.urlencoded({ extended: true })); // to support URL-encoded bodies
 
@@ -37,8 +38,6 @@ app.use(express.urlencoded({ extended: true })); // to support URL-encoded bodie
 app.use(passport.initialize());
 
 require("./middlewares/passport")(passport);
-
-app.options("*", cors()); // include before other routes
 
 // Routers
 app.use("/api/users", userRouter);
