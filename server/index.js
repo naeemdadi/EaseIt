@@ -14,20 +14,23 @@ dotenv.config();
 
 // Initializing the App
 const app = express();
+app.options("*", cors()); // include before other routes
+
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token");
 
 // Set up a whitelist and check against it:
 var allowlist = ["https://easeit.netlify.app"];
 var corsOptionsDelegate = function (req, callback) {
   var corsOptions;
   if (allowlist.indexOf(req.header("Origin")) !== -1) {
-    corsOptions = { origin: true }; // reflect (enable) the requested origin in the CORS response
+    corsOptions = { origin: true, credentials: true }; // reflect (enable) the requested origin in the CORS response
   } else {
     corsOptions = { origin: false }; // disable CORS for this request
   }
   callback(null, corsOptions); // callback expects two parameters: error and options
 };
-
-app.options("*", cors()); // include before other routes
 
 // Middlewares
 app.use(cors(corsOptionsDelegate));
