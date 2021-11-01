@@ -14,11 +14,6 @@ dotenv.config();
 
 // Initializing the App
 const app = express();
-app.options("*", cors()); // include before other routes
-
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token");
 
 // Set up a whitelist and check against it:
 var allowlist = ["https://easeit.netlify.app"];
