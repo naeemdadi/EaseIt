@@ -21,7 +21,7 @@ const Messages = (props) => {
   const currTask = props.location.state;
 
   useEffect(() => {
-    socket.current = io("");
+    socket.current = io("https://easeit-api.herokuapp.com/");
     socket.current.on("getMessage", (data) => {
       setArrivalMessage({
         sender: data.senderId,
