@@ -6,6 +6,7 @@ import { useAuth } from "../../Contexts/AuthContext";
 import "./messages.css";
 import { io } from "socket.io-client";
 import { Container } from "@material-ui/core";
+import AlertBox from "../../Components/AlertBox";
 
 const Messages = (props) => {
   const [messages, setMessages] = useState([]);
@@ -13,6 +14,7 @@ const Messages = (props) => {
   const [membersData, setMembersData] = useState([]);
   const [arrivalMessage, setArrivalMessage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const { auth } = useAuth();
   const scrollRef = useRef();
 
@@ -21,7 +23,7 @@ const Messages = (props) => {
   const currTask = props.location.state;
 
   useEffect(() => {
-    socket.current = io("https://easeit-api.herokuapp.com/");
+    socket.current = io("");
     socket.current.on("getMessage", (data) => {
       setArrivalMessage({
         sender: data.senderId,
@@ -57,9 +59,11 @@ const Messages = (props) => {
           setLoading(false);
         }
       } catch (err) {
-        if (err.response && err.response.data.message) {
-          alert(err.response.data.message || err.response);
-        }
+        setError(
+          err.response && err.response.data.message
+            ? err.response.data.message
+            : err.message
+        );
       }
     };
     getMessages();
@@ -83,9 +87,11 @@ const Messages = (props) => {
           setLoading(false);
         }
       } catch (err) {
-        if (err.response && err.response.data.message) {
-          alert(err.response.data.message || err.response);
-        }
+        setError(
+          err.response && err.response.data.message
+            ? err.response.data.message
+            : err.message
+        );
       }
     };
     getMembers();
@@ -117,9 +123,11 @@ const Messages = (props) => {
       setMessages([...messages, res.data.savedMessage]);
       setNewMessage("");
     } catch (err) {
-      if (err.response && err.response.data.message) {
-        return err.response.data.message || err.response;
-      }
+      setError(
+        err.response && err.response.data.message
+          ? err.response.data.message
+          : err.message
+      );
     }
   };
 
@@ -129,6 +137,8 @@ const Messages = (props) => {
 
   if (loading) {
     return <Loading loading={loading} />;
+  } else if (error) {
+    <AlertBox varient="error" errorMessage={error} />;
   } else {
     return (
       <Container>
