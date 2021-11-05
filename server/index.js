@@ -67,15 +67,8 @@ const start = async () => {
     const server = app.listen(port, () =>
       success({ message: `Server started on port:${port}`, badge: true })
     );
-    const io = require("socket.io")(server, {
-      cors: {
-        origin: ["https://easeit.netlify.app"],
-      },
-    });
-
-    // const io = require("socket.io")(server, {
-    //   cors: corsOptionsDelegate,
-    // });
+    const io = require("socket.io")(server);
+    io.set("origins", "*:*");
 
     let users = [];
 
