@@ -23,9 +23,7 @@ const Messages = (props) => {
   const currTask = props.location.state;
 
   useEffect(() => {
-    socket.current = io(
-      "ws://easeit-api.herokuapp.com//socket.io/?EIO=4&transport=websocket"
-    );
+    socket.current = io("");
     socket.current.on("getMessage", (data) => {
       setArrivalMessage({
         sender: data.senderId,
