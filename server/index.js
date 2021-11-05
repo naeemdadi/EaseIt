@@ -16,7 +16,7 @@ dotenv.config();
 const app = express();
 
 // Set up a whitelist and check against it:
-var allowlist = ["https://easeit.netlify.app"];
+var allowlist = ["https://easeit.netlify.app", "http://localhost:3000"];
 var corsOptionsDelegate = function (req, callback) {
   var corsOptions;
   if (allowlist.indexOf(req.header("Origin")) !== -1) {
@@ -69,9 +69,13 @@ const start = async () => {
     );
     const io = require("socket.io")(server, {
       cors: {
-        origin: ["http://localhost:3000"],
+        origin: ["https://easeit.netlify.app"],
       },
     });
+
+    // const io = require("socket.io")(server, {
+    //   cors: corsOptionsDelegate,
+    // });
 
     let users = [];
 
@@ -96,7 +100,7 @@ const start = async () => {
       // Create Room name
       socket.on("sendMessage", ({ message, userId }) => {
         const user = getUser(userId);
-        io.in(user?.room).emit("getMessage", {
+        socket.to(user?.room).broadcast.emit("getMessage", {
           senderId: user?.userId,
           text: message,
         });

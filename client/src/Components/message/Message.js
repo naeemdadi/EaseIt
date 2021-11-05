@@ -7,9 +7,9 @@ export default function Message({ message, own, sender }) {
   return (
     <div className={own ? "message own" : "message"}>
       <div className="messageTop">
-        {sender.profilePic ? (
+        {sender?.profilePic ? (
           <Avatar
-            alt={sender.name}
+            alt={sender?.name}
             src={sender?.profilePic}
             style={{ marginRight: "10px" }}
           />
@@ -21,7 +21,7 @@ export default function Message({ message, own, sender }) {
               backgroundColor: own ? deepPurple[500] : deepOrange[500],
             }}
           >
-            {sender.name.split(" ")[0]}
+            {sender?.name.split(" ")[0]}
           </Avatar>
         )}
         <p className="messageText">{message.text}</p>

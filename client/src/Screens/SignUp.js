@@ -128,9 +128,13 @@ export default function SignUp() {
         setLoading(false);
       }
       history.push("/signin");
-    } catch (error) {
-      setError(error.response.data.message);
+    } catch (err) {
       setLoading(false);
+      setError(
+        err.response && err.response.data.message
+          ? err.response.data.message
+          : err.message
+      );
     }
   };
 

@@ -13,6 +13,7 @@ const Tasks = () => {
   const { auth } = useAuth();
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const history = useHistory();
 
   const columns = [
@@ -84,10 +85,12 @@ const Tasks = () => {
           setLoading(false);
         }
       } catch (err) {
-        if (err.response && err.response.data.message) {
-          alert(err.response.data.message || err.message);
-          setLoading(false);
-        }
+        setLoading(false);
+        setError(
+          err.response && err.response.data.message
+            ? err.response.data.message
+            : err.message
+        );
       }
     };
     getTasks();
@@ -147,6 +150,8 @@ const Tasks = () => {
 
   if (loading) {
     return <Loading loading={loading} />;
+  } else if (error) {
+    return <AlertBox severity="error" errorMessage={error} />;
   } else {
     if (tasks.length === 0 && auth?.role !== "employee") {
       return <AlertBox errorMessage="Please Add Some Tasks" severity="info" />;

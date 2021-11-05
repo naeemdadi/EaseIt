@@ -14,6 +14,7 @@ import axios from "axios";
 import { useAuth } from "../Contexts/AuthContext";
 import { AddCircle, RemoveCircle } from "@material-ui/icons";
 import Loading from "../Components/Loading";
+import AlertBox from "../Components/AlertBox";
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -47,6 +48,7 @@ const NewTask = () => {
 
   const [data, setData] = useState(initialvalue);
   const [error, setError] = useState(false);
+  const [dataError, setDataError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [employees, setEmployees] = useState([]);
   const [members, setMembers] = useState([]);
@@ -71,7 +73,12 @@ const NewTask = () => {
           setLoading(false);
         }
       } catch (err) {
-        alert(err.response.data.message);
+        setLoading(false);
+        setDataError(
+          err.response && err.response.data.message
+            ? err.response.data.message
+            : err.message
+        );
       }
     };
     getEmployees();
@@ -129,7 +136,11 @@ const NewTask = () => {
       );
       if (res.data) history.push("/");
     } catch (err) {
-      alert(err.response.data.message);
+      alert(
+        err.response && err.response.data.message
+          ? err.response.data.message
+          : err.message
+      );
     }
   };
 
@@ -144,106 +155,108 @@ const NewTask = () => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
-  return (
-    <>
-      <Typography
-        variant="h6"
-        color="textSecondary"
-        component="h2"
-        gutterBottom
-      >
-        Add New Task
-      </Typography>
-
-      <form
-        noValidate
-        autoComplete="off"
-        className={classes.form}
-        onSubmit={onSubmitHandler}
-      >
-        <div className={classes.textFieldContainer}>
-          <TextField
-            fullWidth
-            label="Task Name"
-            variant="outlined"
-            color="primary"
-            className={classes.formField}
-            required
-            onChange={onChangeHandler("taskName")}
-            error={error && !data.taskName}
-            helperText={
-              error && !data.taskName ? "Task Name is Required Field" : null
-            }
-            onFocus={() => setError(false)}
-          />
-          <TextField
-            fullWidth
-            label="Project Name"
-            variant="outlined"
-            color="primary"
-            className={classes.formField}
-            required
-            onChange={onChangeHandler("projectName")}
-            error={error && !data.projectName}
-            helperText={
-              error && !data.projectName
-                ? "Project Name is Required Field"
-                : null
-            }
-            onFocus={() => setError(false)}
-          />
-          <MuiPickersUtilsProvider utils={MomentUtils}>
-            <DatePicker
-              inputVariant="outlined"
-              format="MMMM Do YYYY"
-              disablePast
-              openTo="date"
-              required
-              fullWidth
-              orientation="landscape"
-              label="Task Deadline"
-              views={["year", "month", "date"]}
-              value={data.taskDeadline}
-              className={classes.formField}
-              onChange={handleDateChange("taskDeadline")}
-            />
-          </MuiPickersUtilsProvider>
-        </div>
-        <TextField
-          fullWidth
-          label="Task Description"
-          variant="outlined"
-          color="primary"
-          className={classes.formField}
-          required
-          multiline
-          rows={4}
-          onChange={onChangeHandler("taskDesc")}
-          error={error && !data.taskDesc}
-          helperText={
-            error && !data.taskDesc
-              ? "Task Description is Required Field"
-              : null
-          }
-          onFocus={() => setError(false)}
-        />
-
+  if (loading) {
+    return <Loading loading={loading} />;
+  } else if (dataError) {
+    return <AlertBox severity="error" errorMessage={dataError} />;
+  } else {
+    return (
+      <>
         <Typography
           variant="h6"
           color="textSecondary"
           component="h2"
-          style={{ paddingTop: "8px" }}
+          gutterBottom
         >
-          Add Members to Task
+          Add New Task
         </Typography>
-        <FormHelperText color="textSecondary">
-          Superadmin have access to all the Tasks, employees have access to only
-          tasks they are assigned to.
-        </FormHelperText>
-        {loading ? (
-          <Loading loading={loading} />
-        ) : (
-          employees.map((employee) => {
+
+        <form
+          noValidate
+          autoComplete="off"
+          className={classes.form}
+          onSubmit={onSubmitHandler}
+        >
+          <div className={classes.textFieldContainer}>
+            <TextField
+              fullWidth
+              label="Task Name"
+              variant="outlined"
+              color="primary"
+              className={classes.formField}
+              required
+              onChange={onChangeHandler("taskName")}
+              error={error && !data.taskName}
+              helperText={
+                error && !data.taskName ? "Task Name is Required Field" : null
+              }
+              onFocus={() => setError(false)}
+            />
+            <TextField
+              fullWidth
+              label="Project Name"
+              variant="outlined"
+              color="primary"
+              className={classes.formField}
+              required
+              onChange={onChangeHandler("projectName")}
+              error={error && !data.projectName}
+              helperText={
+                error && !data.projectName
+                  ? "Project Name is Required Field"
+                  : null
+              }
+              onFocus={() => setError(false)}
+            />
+            <MuiPickersUtilsProvider utils={MomentUtils}>
+              <DatePicker
+                inputVariant="outlined"
+                format="MMMM Do YYYY"
+                disablePast
+                openTo="date"
+                required
+                fullWidth
+                orientation="landscape"
+                label="Task Deadline"
+                views={["year", "month", "date"]}
+                value={data.taskDeadline}
+                className={classes.formField}
+                onChange={handleDateChange("taskDeadline")}
+              />
+            </MuiPickersUtilsProvider>
+          </div>
+          <TextField
+            fullWidth
+            label="Task Description"
+            variant="outlined"
+            color="primary"
+            className={classes.formField}
+            required
+            multiline
+            rows={4}
+            onChange={onChangeHandler("taskDesc")}
+            error={error && !data.taskDesc}
+            helperText={
+              error && !data.taskDesc
+                ? "Task Description is Required Field"
+                : null
+            }
+            onFocus={() => setError(false)}
+          />
+
+          <Typography
+            variant="h6"
+            color="textSecondary"
+            component="h2"
+            style={{ paddingTop: "8px" }}
+          >
+            Add Members to Task
+          </Typography>
+          <FormHelperText color="textSecondary">
+            Superadmin have access to all the Tasks, employees have access to
+            only tasks they are assigned to.
+          </FormHelperText>
+          {employees.map((employee) => {
             if (employee.role !== "superAdmin") {
               return (
                 <div
@@ -297,26 +310,26 @@ const NewTask = () => {
             } else {
               return null;
             }
-          })
-        )}
+          })}
 
-        <div>
-          <Button
-            type="submit"
-            color="primary"
-            variant="contained"
-            className={classes.formField}
-            size="large"
-          >
-            Submit
-          </Button>
-          {error && members.length === 0 && (
-            <Typography color="error">Choose atleast one Member</Typography>
-          )}
-        </div>
-      </form>
-    </>
-  );
+          <div>
+            <Button
+              type="submit"
+              color="primary"
+              variant="contained"
+              className={classes.formField}
+              size="large"
+            >
+              Submit
+            </Button>
+            {error && members.length === 0 && (
+              <Typography color="error">Choose atleast one Member</Typography>
+            )}
+          </div>
+        </form>
+      </>
+    );
+  }
 };
 
 export default NewTask;

@@ -4,10 +4,12 @@ import MaterialTable from "material-table";
 import { useAuth } from "../Contexts/AuthContext";
 import axios from "axios";
 import Loading from "../Components/Loading";
+import AlertBox from "../Components/AlertBox";
 
 const Employees = () => {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState();
   const { auth } = useAuth();
 
   const columns = [
@@ -54,7 +56,12 @@ const Employees = () => {
           setLoading(false);
         }
       } catch (err) {
-        alert(err.response.data.message);
+        setLoading(false);
+        setError(
+          err.response && err.response.data.message
+            ? err.response.data.message
+            : err.message
+        );
       }
     };
     getEmployees();
@@ -73,7 +80,11 @@ const Employees = () => {
       let emp = employees.filter((x) => x._id !== data.updatedUser._id);
       setEmployees([...emp, data.updatedUser]);
     } catch (err) {
-      alert(err.response.data.message);
+      alert(
+        err.response && err.response.data.message
+          ? err.response.data.message
+          : err.message
+      );
     }
   };
 
@@ -87,16 +98,22 @@ const Employees = () => {
       let emp = employees.filter((x) => x._id !== data.updatedUser._id);
       setEmployees([...emp, data.updatedUser]);
     } catch (err) {
-      alert(err.response.data.message);
+      alert(
+        err.response && err.response.data.message
+          ? err.response.data.message
+          : err.message
+      );
     }
   };
 
-  if (!loading) {
+  if (loading) {
+    return <Loading loading={loading} />;
+  } else if (error) {
+    return <AlertBox severity="error" errorMessage={error} />;
+  } else {
     return (
       <MaterialTable columns={columns} data={employees} title="Employees" />
     );
-  } else {
-    return <Loading loading={loading} />;
   }
 };
 

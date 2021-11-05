@@ -34,11 +34,12 @@ const Messages = (props) => {
   useEffect(() => {
     arrivalMessage &&
       currTask?.members.includes(arrivalMessage.sender) &&
+      auth._id !== arrivalMessage.sender &&
       setMessages((prev) => [...prev, arrivalMessage]);
-  }, [arrivalMessage, currTask]);
+  }, [arrivalMessage, currTask, auth]);
 
   useEffect(() => {
-    socket.current.emit("addUser", { userId: auth._id, room: currTask._id });
+    socket.current?.emit("addUser", { userId: auth._id, room: currTask._id });
   }, [auth, currTask]);
 
   useEffect(() => {
@@ -102,7 +103,7 @@ const Messages = (props) => {
       taskId: currTask._id,
     };
 
-    socket.current.emit("sendMessage", {
+    socket.current?.emit("sendMessage", {
       message: newMessage,
       userId: auth._id,
     });
