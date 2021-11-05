@@ -13,7 +13,6 @@ import {
   AddCircleOutlineOutlined,
   ChevronLeft,
   HomeOutlined,
-  ListAltOutlined,
   PeopleOutlineOutlined,
 } from "@material-ui/icons";
 import clsx from "clsx";
@@ -98,7 +97,7 @@ const DrawerBar = ({ open, handleDrawerClose }) => {
       return [
         {
           text: "Home",
-          icon: <ListAltOutlined color="secondary" />,
+          icon: <HomeOutlined color="secondary" />,
           path: "/",
         },
         {
@@ -116,7 +115,7 @@ const DrawerBar = ({ open, handleDrawerClose }) => {
       return [
         {
           text: "Home",
-          icon: <ListAltOutlined color="secondary" />,
+          icon: <HomeOutlined color="secondary" />,
           path: "/",
         },
         {
@@ -127,29 +126,6 @@ const DrawerBar = ({ open, handleDrawerClose }) => {
       ];
     }
   };
-
-  // const mainListItems = auth.role === "superAdmin" && [
-  //       {
-  //         text: "Add New Task",
-  //         icon: <AddCircleOutlineOutlined color="secondary" />,
-  //         path: "/newtask",
-  //       },
-  //       {
-  //         text: "All Tasks",
-  //         icon: <ListAltOutlined color="secondary" />,
-  //         path: "/",
-  //       },
-  //       {
-  //         text: "Employees",
-  //         icon: <PeopleOutlineOutlined color="secondary" />,
-  //         path: "/employees",
-  //       },
-  //       {
-  //         text: "Profile",
-  //         icon: <AccountCircleRounded color="secondary" />,
-  //         path: "/profile",
-  //       },
-  //     ] || auth.role === 'admin' &&
 
   return (
     org && (

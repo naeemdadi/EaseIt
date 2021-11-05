@@ -21,7 +21,7 @@ export default function Message({ message, own, sender }) {
               backgroundColor: own ? deepPurple[500] : deepOrange[500],
             }}
           >
-            {sender?.name.split(" ")[0]}
+            {sender?.name.split(" ")[0].slice(0, 2)}
           </Avatar>
         )}
         <p className="messageText">{message.text}</p>
