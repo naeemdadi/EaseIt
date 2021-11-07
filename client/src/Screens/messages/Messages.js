@@ -20,7 +20,7 @@ const Messages = (props) => {
 
   const socket = useRef();
 
-  const ENDPOINT = "ws://easeit-api.herokuapp.com/";
+  const ENDPOINT = "https://easeit-api.herokuapp.com/";
 
   const currTask = props.location.state;
 
