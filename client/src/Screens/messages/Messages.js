@@ -25,7 +25,9 @@ const Messages = (props) => {
   const currTask = props.location.state;
 
   useEffect(() => {
-    socket.current = io(ENDPOINT);
+    socket.current = io(ENDPOINT, {
+      transports: ["websocket", "polling", "flashsocket"],
+    });
     socket.current.on("getMessage", (data) => {
       setArrivalMessage({
         sender: data.senderId,
