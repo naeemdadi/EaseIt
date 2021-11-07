@@ -20,10 +20,12 @@ const Messages = (props) => {
 
   const socket = useRef();
 
+  const ENDPOINT = "https://easeit-api.herokuapp.com/";
+
   const currTask = props.location.state;
 
   useEffect(() => {
-    socket.current = io("");
+    socket.current = io(ENDPOINT);
     socket.current.on("getMessage", (data) => {
       setArrivalMessage({
         sender: data.senderId,
