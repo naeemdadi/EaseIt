@@ -50,8 +50,6 @@ app.get("/", (req, res) => {
   res.send("Server Started");
 });
 
-const server = require("https").createServer(app);
-
 // Start App
 const start = async () => {
   // Connecting with mongodb database
@@ -66,17 +64,15 @@ const start = async () => {
     const port = process.env.PORT || 5000;
 
     // Start a Server
-    // const server = app.listen(port, () =>
-    //   success({ message: `Server started on port:${port}`, badge: true })
-    // );
-    server.listen(port, () =>
+    const server = app.listen(port, () =>
       success({ message: `Server started on port:${port}`, badge: true })
     );
 
     const io = require("socket.io")(server, {
       cors: {
         // origin: ["http://localhost:3000"],
-        origin: ["https://easeit.netlify.app"],
+        origin: "https://easeit.netlify.app",
+        credentials: true,
       },
     });
 
@@ -105,7 +101,7 @@ const start = async () => {
       // Create Room name
       socket.on("sendMessage", ({ message, userId }) => {
         const user = getUser(userId);
-        socket.to(user?.room).broadcast.emit("getMessage", {
+        socket.to(user?.room).emit("getMessage", {
           senderId: user?.userId,
           text: message,
         });

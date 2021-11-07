@@ -7,6 +7,7 @@ import "./messages.css";
 import { io } from "socket.io-client";
 import { Container } from "@material-ui/core";
 import AlertBox from "../../Components/AlertBox";
+import { baseURL } from "../..";
 
 const Messages = (props) => {
   const [messages, setMessages] = useState([]);
@@ -20,7 +21,7 @@ const Messages = (props) => {
 
   const socket = useRef();
 
-  const ENDPOINT = "https://easeit-api.herokuapp.com/";
+  const ENDPOINT = baseURL;
 
   const currTask = props.location.state;
 
@@ -35,7 +36,7 @@ const Messages = (props) => {
         createdAt: Date.now(),
       });
     });
-  }, []);
+  }, [ENDPOINT]);
 
   useEffect(() => {
     arrivalMessage &&
@@ -142,7 +143,7 @@ const Messages = (props) => {
   if (loading) {
     return <Loading loading={loading} />;
   } else if (error) {
-    <AlertBox varient="error" errorMessage={error} />;
+    return <AlertBox varient="error" errorMessage={error} />;
   } else {
     return (
       <Container>
