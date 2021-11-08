@@ -23,7 +23,6 @@ const UserProfile = () => {
   const { auth } = useAuth();
   const { org } = useOrg();
   const classes = useStyles();
-  console.log(auth);
   return (
     <Container component="main" maxWidth="sm" className={classes.root}>
       {auth.profilePic ? (

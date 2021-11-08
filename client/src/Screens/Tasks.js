@@ -36,7 +36,6 @@ const Tasks = () => {
           <Tooltip title="Task Chat/Comments">
             <Button
               variant="contained"
-              color="primary"
               onClick={() =>
                 history.push({ pathname: "/taskmessages", state: rowData })
               }
@@ -114,7 +113,7 @@ const Tasks = () => {
     );
     if (result) {
       try {
-        const res = await axios.post("/api/tasks/updatestatus", data, {
+        const res = await axios.patch("/api/tasks/updatestatus", data, {
           headers: {
             Authorization: auth?.token,
           },

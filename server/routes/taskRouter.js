@@ -64,7 +64,7 @@ taskRouter.get("/gettasks", userAuth, async (req, res) => {
 });
 
 // Update Task Status
-taskRouter.post(
+taskRouter.patch(
   "/updatestatus",
   userAuth,
   checkRole(["superAdmin", "admin"]),

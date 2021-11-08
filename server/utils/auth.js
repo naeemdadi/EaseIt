@@ -79,7 +79,6 @@ const superAdminRegister = async (userInfo, userImg, res) => {
       success: true,
     });
   } catch (err) {
-    console.log(err);
     return res.status(500).json({
       message: `Account creation failed, please try again!`,
       err,
@@ -125,7 +124,6 @@ const employeeRegister = async (userInfo, userImg, res) => {
       success: true,
     });
   } catch (err) {
-    console.log(err);
     return res.status(500).json({
       message: `Account creation failed, please try again!`,
       err,
