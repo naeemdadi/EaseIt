@@ -1,41 +1,13 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  FormHelperText,
-  makeStyles,
-  TextField,
-  Tooltip,
-  Typography,
-} from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
-import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
-import MomentUtils from "@date-io/moment";
 import axios from "axios";
 import { useAuth } from "../Contexts/AuthContext";
-import { AddCircle, RemoveCircle } from "@material-ui/icons";
 import Loading from "../Components/Loading";
 import AlertBox from "../Components/AlertBox";
-
-const useStyles = makeStyles((theme) => ({
-  form: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(2),
-  },
-  textFieldContainer: {
-    display: "flex",
-    gap: theme.spacing(2),
-    [theme.breakpoints.down("sm")]: {
-      display: "block",
-    },
-  },
-  formField: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-  },
-}));
+import TaskDetails from "../Components/TaskDetails";
 
 const NewTask = () => {
-  const classes = useStyles();
   const history = useHistory();
   const { auth } = useAuth();
 
@@ -63,7 +35,6 @@ const NewTask = () => {
             Authorization: auth?.token,
           },
         });
-        // const admin = data.employees.find((emp) => emp.role === "admin");
         const superAdmin = data.employees.find(
           (emp) => emp.role === "superAdmin"
         );
@@ -118,7 +89,7 @@ const NewTask = () => {
       !data.projectName ||
       !data.taskDesc ||
       !data.taskDeadline ||
-      members.length === 0
+      members.length <= 1
     ) {
       setError(true);
       return;
@@ -171,7 +142,7 @@ const NewTask = () => {
           Add New Task
         </Typography>
 
-        <form
+        {/* <form
           noValidate
           autoComplete="off"
           className={classes.form}
@@ -253,8 +224,8 @@ const NewTask = () => {
             Add Members to Task
           </Typography>
           <FormHelperText color="textSecondary">
-            Superadmin have access to all the Tasks, employees have access to
-            only tasks they are assigned to.
+            Superadmin have access to all the Tasks. Admins and employees have
+            access to only tasks they are assigned to.
           </FormHelperText>
           {employees.map((employee) => {
             if (employee.role !== "superAdmin") {
@@ -326,7 +297,19 @@ const NewTask = () => {
               <Typography color="error">Choose atleast one Member</Typography>
             )}
           </div>
-        </form>
+        </form> */}
+        <TaskDetails
+          onSubmitHandler={onSubmitHandler}
+          onChangeHandler={onChangeHandler}
+          handleDateChange={handleDateChange}
+          onClickAddHandler={onClickAddHandler}
+          onClickRemoveHandler={onClickRemoveHandler}
+          employees={employees}
+          members={members}
+          error={error}
+          setError={setError}
+          data={data}
+        />
       </>
     );
   }

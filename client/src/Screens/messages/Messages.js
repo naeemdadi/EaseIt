@@ -69,6 +69,7 @@ const Messages = (props) => {
             ? err.response.data.message
             : err.message
         );
+        setLoading(false);
       }
     };
     getMessages();
@@ -97,6 +98,7 @@ const Messages = (props) => {
             ? err.response.data.message
             : err.message
         );
+        setLoading(false);
       }
     };
     getMembers();
@@ -133,6 +135,7 @@ const Messages = (props) => {
           ? err.response.data.message
           : err.message
       );
+      setLoading(false);
     }
   };
 
@@ -143,7 +146,7 @@ const Messages = (props) => {
   if (loading) {
     return <Loading loading={loading} />;
   } else if (error) {
-    return <AlertBox varient="error" errorMessage={error} />;
+    return <AlertBox severity="error" errorMessage={error} />;
   } else {
     return (
       <Container>

@@ -22,7 +22,10 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    profilePic: {
+    url: {
+      type: String,
+    },
+    publicId: {
       type: String,
     },
     password: {

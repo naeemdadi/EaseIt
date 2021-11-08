@@ -3,21 +3,29 @@ const {
   userLogin,
   userAuth,
   checkRole,
-  userAndCompanyRegister,
   superAdminRegister,
   employeeRegister,
 } = require("../utils/auth");
+const upload = require("../utils/multer");
 
 const userRouter = express.Router();
 
 // Users Registration Route
-userRouter.post("/registerSuperAdmin", async (req, res) => {
-  await superAdminRegister(req.body, res);
-});
+userRouter.post(
+  "/registerSuperAdmin",
+  upload.single("image"),
+  async (req, res) => {
+    await superAdminRegister(req.body, req.file, res);
+  }
+);
 
-userRouter.post("/registerEmployee", async (req, res) => {
-  await employeeRegister(req.body, res);
-});
+userRouter.post(
+  "/registerEmployee",
+  upload.single("image"),
+  async (req, res) => {
+    await employeeRegister(req.body, req.file, res);
+  }
+);
 
 // User Login Route
 userRouter.post("/login", async (req, res) => {

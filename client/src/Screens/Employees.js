@@ -1,10 +1,11 @@
-import { Button } from "@material-ui/core";
+import { Avatar, Button } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import MaterialTable from "material-table";
 import { useAuth } from "../Contexts/AuthContext";
 import axios from "axios";
 import Loading from "../Components/Loading";
 import AlertBox from "../Components/AlertBox";
+import { deepOrange } from "@material-ui/core/colors";
 
 const Employees = () => {
   const [employees, setEmployees] = useState([]);
@@ -13,6 +14,19 @@ const Employees = () => {
   const { auth } = useAuth();
 
   const columns = [
+    {
+      title: "Avatar",
+      render: (rowData) =>
+        rowData.url ? (
+          <Avatar alt={rowData.name} src={rowData.url} />
+        ) : (
+          <Avatar
+            style={{ backgroundColor: deepOrange[500], fontSize: "14px" }}
+          >
+            {rowData.name.split(" ")[0].slice(0, 2)}
+          </Avatar>
+        ),
+    },
     { title: "Name", field: "name" },
     { title: "Email", field: "email" },
     { title: "Designation", field: "designation" },

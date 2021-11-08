@@ -90,7 +90,19 @@ export default function MenuBar({ handleDrawerOpen, open }) {
         >
           EaseIt
         </Typography>
-        {auth ? (
+        {org && (
+          <Typography
+            component="h2"
+            variant="h5"
+            color="inherit"
+            noWrap
+            style={{ cursor: "pointer" }}
+            className={classes.title}
+          >
+            {org.companyName}
+          </Typography>
+        )}
+        {auth && (
           <Tooltip title="Signout">
             <IconButton
               aria-label="signout"
@@ -100,7 +112,7 @@ export default function MenuBar({ handleDrawerOpen, open }) {
               <ExitToApp fontSize="large" />
             </IconButton>
           </Tooltip>
-        ) : null}
+        )}
       </Toolbar>
     </AppBar>
   );

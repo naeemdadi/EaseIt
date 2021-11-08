@@ -3,14 +3,29 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const Company = require("../models/companyModel");
-const fs = require("fs");
+const { cloudinary } = require("../utils/cloudinary");
 
 // Super Admin Registration and COmpany Initialization
-const superAdminRegister = async (userInfo, res) => {
-  const { company, role, userData } = userInfo;
+const superAdminRegister = async (userInfo, userImg, res) => {
+  const {
+    name,
+    email,
+    password,
+    designation,
+    companyName,
+    companyUniqueId,
+    companyJoiningPassword,
+    role,
+  } = userInfo;
   try {
+    // upload image to cloudinary
+    let profilePic;
+    if (userImg) {
+      profilePic = await cloudinary.uploader.upload(userImg.path);
+    }
+
     // Validate email
-    let isEmailAvailable = await validateEmail(userData.email);
+    let isEmailAvailable = await validateEmail(email);
     if (!isEmailAvailable) {
       return res
         .status(400)
@@ -18,7 +33,7 @@ const superAdminRegister = async (userInfo, res) => {
     }
 
     // Validate Company Unique Id
-    let isCompanyAvailable = await validateCompany(company.companyUniqueId);
+    let isCompanyAvailable = await validateCompany(companyUniqueId);
     if (!isCompanyAvailable) {
       return res.status(400).json({
         message: "This company unique id is taken, please try something else.",
@@ -27,28 +42,27 @@ const superAdminRegister = async (userInfo, res) => {
     }
 
     // Create hash password
-    const hashedUserPassword = await bcrypt.hash(userData.password, 12);
+    const hashedUserPassword = await bcrypt.hash(password, 12);
 
     // Create Company hash password
-    const hashedCompanyPassword = await bcrypt.hash(
-      company.joiningPassword,
-      12
-    );
+    const hashedCompanyPassword = await bcrypt.hash(companyJoiningPassword, 12);
 
     // Add new User
     const newUser = new User({
-      email: userData.email,
-      role: role,
-      name: userData.name,
-      designation: userData.designation,
+      email,
+      role,
+      name,
+      designation,
+      url: profilePic?.url,
+      publicId: profilePic?.public_id,
       password: hashedUserPassword,
     });
     const createdUser = await newUser.save();
 
     // Initialize new Firm
     const newCompany = new Company({
-      companyName: company.companyName,
-      uniqueId: company.companyUniqueId,
+      companyName,
+      uniqueId: companyUniqueId,
       joiningPassword: hashedCompanyPassword,
       users: [{ _id: createdUser._id }],
     });
@@ -65,6 +79,7 @@ const superAdminRegister = async (userInfo, res) => {
       success: true,
     });
   } catch (err) {
+    console.log(err);
     return res.status(500).json({
       message: `Account creation failed, please try again!`,
       err,
@@ -74,8 +89,15 @@ const superAdminRegister = async (userInfo, res) => {
 };
 
 // Employee Registration and Firm Association
-const employeeRegister = async (userInfo, res) => {
+const employeeRegister = async (userInfo, userImg, res) => {
   try {
+    // upload image to cloudinary
+    let profilePic;
+    if (userImg) {
+      profilePic = await cloudinary.uploader.upload(userImg.path);
+    } else {
+    }
+
     // Validate email
     let isEmailAvailable = await validateEmail(userInfo.email);
 
@@ -91,7 +113,8 @@ const employeeRegister = async (userInfo, res) => {
       email: userInfo.email,
       name: userInfo.name,
       designation: userInfo.designation,
-      // profilePic: buffer,
+      url: profilePic?.url,
+      publicId: profilePic?.public_id,
       password: hashedPassword,
     });
     const createdUser = await newUser.save();
@@ -102,6 +125,7 @@ const employeeRegister = async (userInfo, res) => {
       success: true,
     });
   } catch (err) {
+    console.log(err);
     return res.status(500).json({
       message: `Account creation failed, please try again!`,
       err,
@@ -135,6 +159,7 @@ const userLogin = async (userInfo, res) => {
             name: user.name,
             designation: user.designation,
             companyId: user.companyId,
+            profilePic: user.url,
             token: `Bearer ${generateToken(user)}`,
             message: `Hi ${
               user.name.split(" ")[0]
@@ -157,6 +182,7 @@ const userLogin = async (userInfo, res) => {
             name: user.name,
             companyId: user.companyId,
             designation: user.designation,
+            profilePic: user.url,
             token: `Bearer ${generateToken(user)}`,
             message: `Hi ${
               user.name.split(" ")[0]

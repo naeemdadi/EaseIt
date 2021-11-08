@@ -70,13 +70,10 @@ const start = async () => {
 
     const io = require("socket.io")(server, {
       cors: {
-        // origin: ["http://localhost:3000"],
-        origin: "https://easeit.netlify.app",
+        origin: ["https://easeit.netlify.app"],
         credentials: true,
       },
     });
-
-    // const io = require("socket.io")(server);
 
     let users = [];
 

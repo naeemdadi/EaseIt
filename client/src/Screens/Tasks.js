@@ -1,11 +1,11 @@
 import { Button, Tooltip } from "@material-ui/core";
 import axios from "axios";
 import MaterialTable from "material-table";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 import Loading from "../Components/Loading";
 import { useAuth } from "../Contexts/AuthContext";
 import moment from "moment";
-import { ChatBubbleOutlined } from "@material-ui/icons";
+import { ChatBubbleOutlined, DeleteOutline } from "@material-ui/icons";
 import AlertBox from "../Components/AlertBox";
 import { useHistory } from "react-router";
 
@@ -20,9 +20,16 @@ const Tasks = () => {
     { title: "Task Name", field: "taskName" },
     { title: "Project Name", field: "projectName" },
     { title: "Task Desc", field: "taskDesc" },
-    { title: "Task Deadline", field: "taskDeadline" },
+    {
+      title: "Task Deadline",
+      field: "taskDeadline",
+      render: (rowData) => {
+        return capitalizeFirstLetter(moment(rowData.taskDeadline).fromNow());
+      },
+    },
     {
       field: "Task Chat",
+      editable: false,
       title: "Chat",
       render: (rowData) => {
         return (
@@ -42,10 +49,17 @@ const Tasks = () => {
     },
   ];
 
+  const tableIcons = {
+    Delete: forwardRef((props, ref) => (
+      <DeleteOutline {...props} ref={ref} style={{ fontSize: 32 }} />
+    )),
+  };
+
   if (auth?.role !== "employee")
     columns.push({
       field: "Task Status",
       title: "Status",
+      editable: false,
       render: (rowData) => (
         <Button
           variant="contained"
@@ -72,16 +86,8 @@ const Tasks = () => {
             Authorization: auth?.token,
           },
         });
-        const updatedTimeFormat = data.userIncludedTasks.map((task) => {
-          return {
-            ...task,
-            taskDeadline: capitalizeFirstLetter(
-              moment(task.taskDeadline).fromNow()
-            ),
-          };
-        });
         if (mounted) {
-          setTasks(updatedTimeFormat);
+          setTasks(data.userIncludedTasks);
           setLoading(false);
         }
       } catch (err) {
@@ -100,51 +106,51 @@ const Tasks = () => {
   }, [auth]);
 
   const taskStatusHandler = async (data) => {
-    try {
-      const res = await axios.post("/api/tasks/updatestatus", data, {
-        headers: {
-          Authorization: auth?.token,
-        },
-      });
-      let filteredTasks = tasks.filter(
-        (task) => task._id !== res.data.updatedTask._id
-      );
-      const updatedTimeFormat = {
-        ...res.data.updatedTask,
-        taskDeadline: capitalizeFirstLetter(
-          moment(res.data.updatedTask.taskDeadline).fromNow()
-        ),
-      };
-      setTasks([...filteredTasks, updatedTimeFormat]);
-    } catch (err) {
-      if (err.response && err.response.data.message) {
-        alert(err.response.data.message || err.message);
-      }
-    }
-  };
-
-  const onDeleteHandler = async (data) => {
     let result = window.confirm(
-      "You want to delete " +
+      "You want to change the status of " +
         data.taskName +
         " from the project " +
         data.projectName
     );
     if (result) {
       try {
-        const res = await axios.delete("/api/tasks/deletetask/" + data._id, {
+        const res = await axios.post("/api/tasks/updatestatus", data, {
           headers: {
             Authorization: auth?.token,
           },
         });
-        alert(res.data.message);
-        const filterTasks = tasks.filter((task) => task._id !== data._id);
-        setTasks(filterTasks);
+        let filteredTasks = tasks.filter(
+          (task) => task._id !== res.data.updatedTask._id
+        );
+        setTasks([...filteredTasks, res.data.updatedTask]);
       } catch (err) {
         if (err.response && err.response.data.message) {
           alert(err.response.data.message);
+        } else {
+          alert(err.message);
         }
       }
+    }
+  };
+
+  const onDeleteHandler = async (data, resolve) => {
+    try {
+      const res = await axios.delete("/api/tasks/deletetask/" + data._id, {
+        headers: {
+          Authorization: auth?.token,
+        },
+      });
+      alert(res.data.message);
+      const filterTasks = tasks.filter((task) => task._id !== data._id);
+      setTasks(filterTasks);
+      resolve();
+    } catch (err) {
+      if (err.response && err.response.data.message) {
+        alert(err.response.data.message);
+      } else {
+        alert(err.message);
+      }
+      resolve();
     }
   };
 
@@ -167,28 +173,18 @@ const Tasks = () => {
     return (
       <MaterialTable
         columns={columns}
+        icons={tableIcons}
         data={tasks}
         options={{ sorting: true, actionsColumnIndex: -1 }}
         title="Tasks"
-        actions={[
-          // {
-          //   icon: "edit",
-          //   iconProps: { color: "primary" },
-          //   tooltip: "Edit Task",
-          //   onClick: (event, rowData) => {
-          //     history.push({
-          //       pathname: "/edittask",
-          //       state: { taskData: rowData },
-          //     });
-          //   },
-          // },
-          auth?.role !== "employee" && {
-            icon: "delete",
-            iconProps: { color: "primary", fontSize: "large" },
-            tooltip: "Delete Task",
-            onClick: (event, rowData) => onDeleteHandler(rowData),
-          },
-        ]}
+        editable={
+          auth.role !== "employee" && {
+            onRowDelete: (oldData) =>
+              new Promise((resolve) => {
+                onDeleteHandler(oldData, resolve);
+              }),
+          }
+        }
       />
     );
   }

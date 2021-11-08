@@ -46,7 +46,7 @@ export default function SignUp() {
     name: "",
     email: "",
     password: "",
-    // profileImg: "",
+    profileImg: "",
     designation: "",
   });
   const [company, setCompany] = useState({
@@ -64,9 +64,9 @@ export default function SignUp() {
     setRole(newRole);
   };
 
-  // const handlePhoto = (e) => {
-  //   setUserData({ ...userData, profileImg: e.target.files[0] });
-  // };
+  const handlePhoto = (e) => {
+    setUserData({ ...userData, profileImg: e.target.files[0] });
+  };
 
   function validateEmail(email) {
     const re =
@@ -90,6 +90,7 @@ export default function SignUp() {
 
   const userSignUp = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     if (
       role === "superAdmin"
@@ -112,25 +113,39 @@ export default function SignUp() {
     }
     try {
       if (role === "superAdmin") {
-        const { data } = await axios.post("/api/users/registerSuperAdmin", {
-          userData,
-          company,
-          role,
-        });
-        alert(data?.message);
+        const user = new FormData();
+        user.append("image", userData.profileImg);
+        user.append("name", userData.name);
+        user.append("email", userData.email);
+        user.append("password", userData.password);
+        user.append("designation", userData.designation);
+        user.append("companyName", company.companyName);
+        user.append("companyUniqueId", company.companyUniqueId);
+        user.append("companyJoiningPassword", company.joiningPassword);
+        user.append("role", role);
+
+        const { data } = await axios.post(
+          "/api/users/registerSuperAdmin",
+          user
+        );
+        setError(data?.message);
         setLoading(false);
       } else {
-        const { data } = await axios.post(
-          "/api/users/registerEmployee",
-          userData
-        );
-        alert(data?.message);
+        const user = new FormData();
+        user.append("image", userData.profileImg);
+        user.append("name", userData.name);
+        user.append("email", userData.email);
+        user.append("password", userData.password);
+        user.append("designation", userData.designation);
+
+        const { data } = await axios.post("/api/users/registerEmployee", user);
+        setError(data?.message);
         setLoading(false);
       }
       history.push("/signin");
     } catch (err) {
       setLoading(false);
-      setError(
+      alert(
         err.response && err.response.data.message
           ? err.response.data.message
           : err.message
@@ -303,21 +318,21 @@ export default function SignUp() {
                 onFocus={() => setRequiredError(false)}
               />
             </Grid>
-            {/* <Grid item xs={12}>
+            <Grid item xs={12}>
               <label
-                htmlFor="profilePic"
+                htmlFor="image"
                 style={{ display: "block", paddingBottom: "6px" }}
               >
                 Choose Profile Picture
               </label>
               <input
                 type="file"
-                filename="profilePic"
-                name="profilePic"
+                filename="image"
+                name="image"
                 accpt="image/*"
                 onChange={handlePhoto}
               />
-            </Grid> */}
+            </Grid>
           </Grid>
           <Button
             type="submit"

@@ -95,10 +95,12 @@ export default function SignIn() {
         }
         history.push("/");
       } catch (err) {
-        if (err.response && err.response.data.message) {
-          setError(err.response.data.message || err.response);
-          setLoading(false);
-        }
+        setError(
+          err.response && err.response.data.message
+            ? err.response.data.message
+            : err.message
+        );
+        setLoading(false);
       }
     }
   };
@@ -113,7 +115,6 @@ export default function SignIn() {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        {error && <AlertBox errorMessage={error} severity="error" />}
         <form className={classes.form} noValidate onSubmit={signInHandler}>
           <TextField
             variant="outlined"
@@ -145,16 +146,7 @@ export default function SignIn() {
             helperText={requiredError ? "Password field is required" : null}
             onFocus={() => setRequiredError(false)}
           />
-          {/* <FormControlLabel
-            control={
-              <Checkbox
-                value="remember"
-                color="primary"
-                onChange={() => setRemember(!remember)}
-              />
-            }
-            label="Remember me"
-          /> */}
+          {error && <AlertBox errorMessage={error} severity="error" />}
           <Button
             type="submit"
             fullWidth

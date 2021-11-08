@@ -58,16 +58,6 @@ const App = () => {
               />
             </Suspense>
           )}
-          {/* {(auth.role === "admin" || auth.role === "superAdmin") && (
-            <Suspense fallback={<Loading loading={true} />}>
-              <PrivateRoute
-                path="/edittask"
-                exact
-                restrict={["employee"]}
-                component={EditTask}
-              />
-            </Suspense>
-          )} */}
           <PrivateRoute path="/taskmessages" exact component={Messages} />
         </Layout>
         <Route component={BadRequest} />

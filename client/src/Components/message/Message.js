@@ -7,10 +7,10 @@ export default function Message({ message, own, sender }) {
   return (
     <div className={own ? "message own" : "message"}>
       <div className="messageTop">
-        {sender?.profilePic ? (
+        {sender?.url ? (
           <Avatar
             alt={sender?.name}
-            src={sender?.profilePic}
+            src={sender?.url}
             style={{ marginRight: "10px" }}
           />
         ) : (
