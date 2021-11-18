@@ -53,6 +53,9 @@ export default function SignIn() {
   const [requiredError, setRequiredError] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [loadingSuperAdmin, setLoadingSuperAdmin] = useState(false);
+  const [loadingAdmin, setLoadingAdmin] = useState(false);
+  const [loadingEmp, setLoadingEmp] = useState(false);
 
   function validateEmail(email) {
     const re =
@@ -105,8 +108,20 @@ export default function SignIn() {
     }
   };
 
+  function setGuestLoginTrue(des) {
+    if (des === "superAdmin") setLoadingSuperAdmin(true);
+    if (des === "admin") setLoadingAdmin(true);
+    if (des === "employee") setLoadingEmp(true);
+  }
+
+  function setGuestLoginFalse(des) {
+    if (des === "superAdmin") setLoadingSuperAdmin(false);
+    if (des === "admin") setLoadingAdmin(false);
+    if (des === "employee") setLoadingEmp(false);
+  }
+
   const guestSignIn = async (desi) => {
-    setLoading(true);
+    setGuestLoginTrue(desi);
     try {
       const { data } = await axios.post("/api/users/guestLogin", { desi });
       setAuth(data.user);
@@ -121,7 +136,7 @@ export default function SignIn() {
           return prev;
         });
       }
-      setLoading(false);
+      setGuestLoginFalse(desi);
       history.push("/");
     } catch (err) {
       setError(
@@ -129,7 +144,7 @@ export default function SignIn() {
           ? err.response.data.message
           : err.message
       );
-      setLoading(false);
+      setGuestLoginFalse(desi);
     }
   };
 
@@ -217,7 +232,7 @@ export default function SignIn() {
           style={{ marginTop: "10px" }}
           onClick={() => guestSignIn("superAdmin")}
         >
-          {loading ? (
+          {loadingSuperAdmin ? (
             <CircularProgress color="inherit" size={20} />
           ) : (
             "Sign In as Super Admin"
@@ -231,7 +246,7 @@ export default function SignIn() {
           style={{ marginTop: "10px" }}
           onClick={() => guestSignIn("admin")}
         >
-          {loading ? (
+          {loadingAdmin ? (
             <CircularProgress color="inherit" size={20} />
           ) : (
             "Sign In as Admin"
@@ -245,7 +260,7 @@ export default function SignIn() {
           style={{ marginTop: "10px" }}
           onClick={() => guestSignIn("employee")}
         >
-          {loading ? (
+          {loadingEmp ? (
             <CircularProgress color="inherit" size={20} />
           ) : (
             "Sign In as Employee"
