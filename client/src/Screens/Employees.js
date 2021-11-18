@@ -16,6 +16,8 @@ const Employees = () => {
   const columns = [
     {
       title: "Avatar",
+      sorting: false,
+      editable: "never",
       render: (rowData) =>
         rowData.url ? (
           <Avatar alt={rowData.name} src={rowData.url} />
@@ -31,8 +33,9 @@ const Employees = () => {
     { title: "Email", field: "email" },
     { title: "Designation", field: "designation" },
     {
-      field: "url",
-      title: "Avatar",
+      title: "Role",
+      editable: "never",
+      customSort: (a, b) => (a.role === "admin") - (b.role === "admin"),
       render: (rowData) =>
         auth.role === "superAdmin" ? (
           <Button
@@ -120,13 +123,53 @@ const Employees = () => {
     }
   };
 
+  const updateEmployeeData = async (newData, oldData, resolve) => {
+    const { companyId, designation, email, name, _id } = newData;
+    try {
+      const res = await axios.patch(
+        "/api/users/updateEmployee",
+        { companyId, designation, email, name, _id },
+        {
+          headers: {
+            Authorization: auth?.token,
+          },
+        }
+      );
+      let filteredEmployees = employees.filter(
+        (emp) => emp._id !== res.data._id
+      );
+      setEmployees([...filteredEmployees, res.data]);
+    } catch (err) {
+      if (err.response && err.response.data.message) {
+        alert(err.response.data.message);
+      } else {
+        alert(err.message);
+      }
+    }
+    resolve();
+  };
+
   if (loading) {
     return <Loading loading={loading} />;
   } else if (error) {
     return <AlertBox severity="error" errorMessage={error} />;
   } else {
     return (
-      <MaterialTable columns={columns} data={employees} title="Employees" />
+      <MaterialTable
+        style={{ padding: "20px" }}
+        columns={columns}
+        data={employees}
+        title="Employees"
+        options={{ sorting: true, actionsColumnIndex: -1 }}
+        editable={
+          auth.role === "superAdmin" && {
+            onRowUpdate: (newData, oldData) =>
+              new Promise((resolve) =>
+                updateEmployeeData(newData, oldData, resolve)
+              ),
+          }
+        }
+      />
     );
   }
 };

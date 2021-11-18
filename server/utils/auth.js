@@ -204,6 +204,53 @@ const userLogin = async (userInfo, res) => {
   }
 };
 
+// Guest User Login
+const guestUserLogin = async ({ desi }, res) => {
+  function email() {
+    if (desi === "superAdmin") {
+      return "test1@test.com";
+    }
+    if (desi === "admin") {
+      return "testadmin1@test.com";
+    }
+    if (desi === "employee") {
+      return "testemp11@test.com";
+    }
+  }
+  try {
+    const user = await User.findOne({ email: email() });
+    const userCompany = await Company.findById(user.companyId);
+    res.status(200).send({
+      user: {
+        _id: user._id,
+        email: user.email,
+        role: user.role,
+        name: user.name,
+        designation: user.designation,
+        companyId: user.companyId,
+        profilePic: user.url,
+        token: `Bearer ${generateToken(user)}`,
+        message: `Hi ${
+          user.name.split(" ")[0]
+        }, you're successfullty logged in!`,
+        success: true,
+      },
+      company: {
+        _id: userCompany._id,
+        companyName: userCompany.companyName,
+        users: [...userCompany.users],
+      },
+      expiresIn: 168,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Login request is failed, please try again.",
+      err,
+      success: false,
+    });
+  }
+};
+
 // Passport middleware
 const userAuth = passport.authenticate("jwt", { session: false });
 
@@ -232,20 +279,10 @@ const checkRole = (roles) => (req, res, next) =>
     ? res.status(401).json({ message: "Unauthorized" })
     : next();
 
-const serializeUser = (user) => {
-  return {
-    username: user.username,
-    email: user.email,
-    name: user.name,
-    _id: user._id,
-    updatedAt: user.updatedAt,
-    createdAt: user.createdAt,
-  };
-};
-
 module.exports = {
   superAdminRegister,
   userLogin,
+  guestUserLogin,
   userAuth,
   checkRole,
   employeeRegister,

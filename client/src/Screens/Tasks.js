@@ -29,7 +29,7 @@ const Tasks = () => {
     },
     {
       field: "Task Chat",
-      editable: false,
+      editable: "never",
       title: "Chat",
       render: (rowData) => {
         return (
@@ -58,7 +58,7 @@ const Tasks = () => {
     columns.push({
       field: "Task Status",
       title: "Status",
-      editable: false,
+      editable: "never",
       render: (rowData) => (
         <Button
           variant="contained"
@@ -153,6 +153,32 @@ const Tasks = () => {
     }
   };
 
+  const onTaskUpdateHandler = async (newData, oldData, resolve) => {
+    const { _id, taskName, taskDesc, taskDeadline, projectName } = newData;
+    try {
+      const res = await axios.patch(
+        "/api/tasks/updatetask",
+        { _id, taskName, taskDesc, taskDeadline, projectName },
+        {
+          headers: {
+            Authorization: auth?.token,
+          },
+        }
+      );
+      let filteredTasks = tasks.filter(
+        (task) => task._id !== res.data.updatedTask._id
+      );
+      setTasks([...filteredTasks, res.data.updatedTask]);
+    } catch (err) {
+      if (err.response && err.response.data.message) {
+        alert(err.response.data.message);
+      } else {
+        alert(err.message);
+      }
+    }
+    resolve();
+  };
+
   if (loading) {
     return <Loading loading={loading} />;
   } else if (error) {
@@ -171,6 +197,7 @@ const Tasks = () => {
     }
     return (
       <MaterialTable
+        style={{ padding: "20px" }}
         columns={columns}
         icons={tableIcons}
         data={tasks}
@@ -182,6 +209,10 @@ const Tasks = () => {
               new Promise((resolve) => {
                 onDeleteHandler(oldData, resolve);
               }),
+            onRowUpdate: (newData, oldData) =>
+              new Promise((resolve) =>
+                onTaskUpdateHandler(newData, oldData, resolve)
+              ),
           }
         }
       />

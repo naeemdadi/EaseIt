@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Avatar,
   Button,
   FormHelperText,
   makeStyles,
@@ -21,6 +22,8 @@ const useStyles = makeStyles((theme) => ({
     gap: theme.spacing(2),
     [theme.breakpoints.down("sm")]: {
       display: "block",
+      alignItems: "center",
+      textAlign: "center",
     },
   },
   formField: {
@@ -122,11 +125,14 @@ const TaskDetails = (props) => {
       {props.employees.map((employee) => {
         if (employee.role !== "superAdmin") {
           return (
-            <div
-              key={employee._id}
-              className={classes.textFieldContainer}
-              style={{ alignItems: "center" }}
-            >
+            <div key={employee._id} className={classes.textFieldContainer}>
+              {employee.url ? (
+                <Avatar alt={employee.name} src={employee.url} />
+              ) : (
+                <Avatar className={classes.large}>
+                  {employee.name.split(" ")[0].slice(0, 2)}
+                </Avatar>
+              )}
               <TextField
                 fullWidth
                 label="Name"

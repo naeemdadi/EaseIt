@@ -1,10 +1,12 @@
 const express = require("express");
+const User = require("../models/userModel");
 const {
   userLogin,
   userAuth,
   checkRole,
   superAdminRegister,
   employeeRegister,
+  guestUserLogin,
 } = require("../utils/auth");
 const upload = require("../utils/multer");
 
@@ -32,43 +34,36 @@ userRouter.post("/login", async (req, res) => {
   await userLogin(req.body, res);
 });
 
-// User Profile
-userRouter.get("/profile", userAuth, async (req, res) => {
-  return res.json(serializeUser(req.body));
+// Guest User Login Route
+userRouter.post("/guestLogin", async (req, res) => {
+  await guestUserLogin(req.body, res);
 });
 
-// User Protected Route
-userRouter.get(
-  "/employee",
+// Employee Update
+userRouter.patch(
+  "/updateEmployee",
   userAuth,
-  checkRole(["employee"]),
+  checkRole(["superAdmin"]),
   async (req, res) => {
-    return res.json("Hello Employee!");
-  }
-);
-
-// Admin protected route
-userRouter.get("/admin", userAuth, checkRole(["admin"]), async (req, res) => {
-  return res.json("Hello Admin!");
-});
-
-// Superadmin protected route
-userRouter.get(
-  "/super-admin",
-  userAuth,
-  checkRole(["superadmin"]),
-  async (req, res) => {
-    return res.json("Hello Superadmin!");
-  }
-);
-
-// Superadmin and Admin protected route
-userRouter.get(
-  "/super-admin-and-admin",
-  userAuth,
-  checkRole(["superadmin", "admin"]),
-  async (req, res) => {
-    return res.json("Hello Admin and Super Admin!");
+    if (req.user.companyId.toString() !== req.body.companyId) {
+      res
+        .status(400)
+        .json({ message: `You are not part of this org!`, success: false });
+    }
+    try {
+      const updateEmployee = await User.findByIdAndUpdate(
+        req.body._id,
+        req.body,
+        {
+          new: true,
+        }
+      );
+      res.status(200).json(updateEmployee);
+    } catch (err) {
+      res
+        .status(500)
+        .json({ message: "Error, please try again!", err, success: false });
+    }
   }
 );
 

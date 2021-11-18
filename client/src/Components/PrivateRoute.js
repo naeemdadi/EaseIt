@@ -35,7 +35,7 @@ const PrivateRoute = ({ component: Component, restrict, ...rest }) => {
         }
         if (!auth) return <Redirect to="/signin" />;
       }}
-    ></Route>
+    />
   );
 };
 

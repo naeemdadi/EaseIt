@@ -84,6 +84,25 @@ taskRouter.patch(
   }
 );
 
+// Update the task data
+taskRouter.patch(
+  "/updatetask",
+  userAuth,
+  checkRole(["superAdmin", "admin"]),
+  async (req, res) => {
+    try {
+      const updatedTask = await Task.findByIdAndUpdate(req.body._id, req.body, {
+        new: true,
+      });
+      res.status(200).json({ updatedTask, success: true });
+    } catch (err) {
+      res
+        .status(500)
+        .json({ message: "Error, please try again!", err, success: false });
+    }
+  }
+);
+
 // Delete Task
 taskRouter.delete(
   "/deletetask/:id",

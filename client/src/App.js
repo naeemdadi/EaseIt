@@ -38,16 +38,14 @@ const App = () => {
         <Layout>
           <PrivateRoute path="/" exact component={Tasks} />
           <PrivateRoute path="/profile" exact component={UserProfile} />
-          {auth?.role === "superAdmin" && (
-            <Suspense fallback={<Loading loading={true} />}>
-              <PrivateRoute
-                path="/employees"
-                restrict={["employee", "admin"]}
-                exact
-                component={Employees}
-              />
-            </Suspense>
-          )}
+          <Suspense fallback={<Loading loading={true} />}>
+            <PrivateRoute
+              path="/employees"
+              restrict={["employee", "admin"]}
+              exact
+              component={Employees}
+            />
+          </Suspense>
           {(auth?.role === "admin" || auth?.role === "superAdmin") && (
             <Suspense fallback={<Loading loading={true} />}>
               <PrivateRoute

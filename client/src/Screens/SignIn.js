@@ -105,6 +105,34 @@ export default function SignIn() {
     }
   };
 
+  const guestSignIn = async (desi) => {
+    setLoading(true);
+    try {
+      const { data } = await axios.post("/api/users/guestLogin", { desi });
+      setAuth(data.user);
+      setAuth((prev) => {
+        localStorage.setItem("userInfo", JSON.stringify(prev));
+        return prev;
+      });
+      if (data.company) {
+        setOrg(data.company);
+        setOrg((prev) => {
+          localStorage.setItem("orgInfo", JSON.stringify(prev));
+          return prev;
+        });
+      }
+      setLoading(false);
+      history.push("/");
+    } catch (err) {
+      setError(
+        err.response && err.response.data.message
+          ? err.response.data.message
+          : err.message
+      );
+      setLoading(false);
+    }
+  };
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -160,16 +188,8 @@ export default function SignIn() {
               "Sign In"
             )}
           </Button>
+
           <Grid container>
-            {/* <Grid item xs>
-              <Link
-                variant="body2"
-                // onClick={passwordReset}
-                className={classes.link}
-              >
-                Forgot password?
-              </Link>
-            </Grid> */}
             <Grid item>
               <Link
                 variant="body2"
@@ -181,6 +201,60 @@ export default function SignIn() {
             </Grid>
           </Grid>
         </form>
+        <Typography
+          component="h2"
+          variant="h5"
+          align="center"
+          style={{ marginTop: "20px" }}
+        >
+          Guest User Sign In
+        </Typography>
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="secondary"
+          style={{ marginTop: "10px" }}
+          onClick={() => guestSignIn("superAdmin")}
+        >
+          {loading ? (
+            <CircularProgress color="inherit" size={20} />
+          ) : (
+            "Sign In as Super Admin"
+          )}
+        </Button>
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="secondary"
+          style={{ marginTop: "10px" }}
+          onClick={() => guestSignIn("admin")}
+        >
+          {loading ? (
+            <CircularProgress color="inherit" size={20} />
+          ) : (
+            "Sign In as Admin"
+          )}
+        </Button>
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="secondary"
+          style={{ marginTop: "10px" }}
+          onClick={() => guestSignIn("employee")}
+        >
+          {loading ? (
+            <CircularProgress color="inherit" size={20} />
+          ) : (
+            "Sign In as Employee"
+          )}
+        </Button>
+        <Typography variant="subtitle1" style={{ marginTop: "10px" }}>
+          Note: For full testing of the app sign in as all the three Roles
+          provided using different incognito windows.
+        </Typography>
       </div>
     </Container>
   );

@@ -159,7 +159,10 @@ const Messages = (props) => {
                   (mem) => mem._id === message.sender
                 );
                 return (
-                  <div ref={scrollRef} key={message._id}>
+                  <div
+                    ref={scrollRef}
+                    key={`${message._id}_${message.createdAt}`}
+                  >
                     <Message message={message} own={own} sender={senderInfo} />
                   </div>
                 );

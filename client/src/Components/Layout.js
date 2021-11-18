@@ -6,6 +6,7 @@ import DrawerBar from "./DrawerBar";
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
+    height: "100vh",
   },
   page: {
     background: "#f9f9f9",
