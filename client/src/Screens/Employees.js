@@ -1,11 +1,12 @@
 import { Avatar, Button } from "@material-ui/core";
-import React, { useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 import MaterialTable from "material-table";
 import { useAuth } from "../Contexts/AuthContext";
 import axios from "axios";
 import Loading from "../Components/Loading";
 import AlertBox from "../Components/AlertBox";
 import { deepOrange } from "@material-ui/core/colors";
+import { EditOutlined } from "@material-ui/icons";
 
 const Employees = () => {
   const [employees, setEmployees] = useState([]);
@@ -87,6 +88,12 @@ const Employees = () => {
     };
   }, [auth]);
 
+  const tableIcons = {
+    Edit: forwardRef((props, ref) => (
+      <EditOutlined {...props} ref={ref} style={{ fontSize: 32 }} />
+    )),
+  };
+
   const makeAdminHandler = async (rowData) => {
     try {
       const { data } = await axios.post(
@@ -158,6 +165,7 @@ const Employees = () => {
       <MaterialTable
         style={{ padding: "20px" }}
         columns={columns}
+        icons={tableIcons}
         data={employees}
         title="Employees"
         options={{ sorting: true, actionsColumnIndex: -1 }}

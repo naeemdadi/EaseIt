@@ -5,7 +5,11 @@ import React, { forwardRef, useEffect, useState } from "react";
 import Loading from "../Components/Loading";
 import { useAuth } from "../Contexts/AuthContext";
 import moment from "moment";
-import { ChatBubbleOutlined, DeleteOutline } from "@material-ui/icons";
+import {
+  ChatBubbleOutlined,
+  DeleteOutline,
+  EditOutlined,
+} from "@material-ui/icons";
 import AlertBox from "../Components/AlertBox";
 import { useHistory } from "react-router";
 
@@ -51,6 +55,9 @@ const Tasks = () => {
   const tableIcons = {
     Delete: forwardRef((props, ref) => (
       <DeleteOutline {...props} ref={ref} style={{ fontSize: 32 }} />
+    )),
+    Edit: forwardRef((props, ref) => (
+      <EditOutlined {...props} ref={ref} style={{ fontSize: 32 }} />
     )),
   };
 
@@ -134,12 +141,11 @@ const Tasks = () => {
 
   const onDeleteHandler = async (data, resolve) => {
     try {
-      const res = await axios.delete("/api/tasks/deletetask/" + data._id, {
+      await axios.delete("/api/tasks/deletetask/" + data._id, {
         headers: {
           Authorization: auth?.token,
         },
       });
-      alert(res.data.message);
       const filterTasks = tasks.filter((task) => task._id !== data._id);
       setTasks(filterTasks);
       resolve();
