@@ -7,6 +7,8 @@ import Loading from "../Components/Loading";
 import AlertBox from "../Components/AlertBox";
 import { deepOrange } from "@material-ui/core/colors";
 import { EditOutlined } from "@material-ui/icons";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Employees = () => {
   const [employees, setEmployees] = useState([]);
@@ -104,7 +106,7 @@ const Employees = () => {
       let emp = employees.filter((x) => x._id !== data.updatedUser._id);
       setEmployees([...emp, data.updatedUser]);
     } catch (err) {
-      alert(
+      toast.error(
         err.response && err.response.data.message
           ? err.response.data.message
           : err.message
@@ -122,7 +124,7 @@ const Employees = () => {
       let emp = employees.filter((x) => x._id !== data.updatedUser._id);
       setEmployees([...emp, data.updatedUser]);
     } catch (err) {
-      alert(
+      toast.error(
         err.response && err.response.data.message
           ? err.response.data.message
           : err.message
@@ -147,37 +149,40 @@ const Employees = () => {
       );
       setEmployees([...filteredEmployees, res.data]);
     } catch (err) {
-      if (err.response && err.response.data.message) {
-        alert(err.response.data.message);
-      } else {
-        alert(err.message);
-      }
+      toast.error(
+        err.response && err.response.data.message
+          ? err.response.data.message
+          : err.message
+      );
     }
     resolve();
   };
 
   if (loading) {
-    return <Loading loading={loading} />;
+    return <Loading />;
   } else if (error) {
     return <AlertBox severity="error" errorMessage={error} />;
   } else {
     return (
-      <MaterialTable
-        style={{ padding: "20px" }}
-        columns={columns}
-        icons={tableIcons}
-        data={employees}
-        title="Employees"
-        options={{ sorting: true, actionsColumnIndex: -1 }}
-        editable={
-          auth.role === "superAdmin" && {
-            onRowUpdate: (newData, oldData) =>
-              new Promise((resolve) =>
-                updateEmployeeData(newData, oldData, resolve)
-              ),
+      <>
+        <ToastContainer />
+        <MaterialTable
+          style={{ padding: "20px" }}
+          columns={columns}
+          icons={tableIcons}
+          data={employees}
+          title="Employees"
+          options={{ sorting: true, actionsColumnIndex: -1 }}
+          editable={
+            auth.role === "superAdmin" && {
+              onRowUpdate: (newData, oldData) =>
+                new Promise((resolve) =>
+                  updateEmployeeData(newData, oldData, resolve)
+                ),
+            }
           }
-        }
-      />
+        />
+      </>
     );
   }
 };

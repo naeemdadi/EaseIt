@@ -3,7 +3,7 @@ import { Link, Typography } from "@material-ui/core";
 
 export default function BadRequest() {
   return (
-    <Typography variant="h5" align="center">
+    <Typography variant="h5" align="center" style={{ paddingTop: "2rem" }}>
       You hit 404. Go to{" "}
       <Link
         component={RouterLink}

@@ -144,7 +144,7 @@ const Messages = (props) => {
   }, [messages]);
 
   if (loading) {
-    return <Loading loading={loading} />;
+    return <Loading />;
   } else if (error) {
     return <AlertBox severity="error" errorMessage={error} />;
   } else {

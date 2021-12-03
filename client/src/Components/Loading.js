@@ -1,18 +1,18 @@
-import { Backdrop, CircularProgress, makeStyles } from "@material-ui/core";
+import { CircularProgress } from "@material-ui/core";
 import React from "react";
 
-const useStyles = makeStyles((theme) => ({
-  backdrop: {
-    zIndex: theme.zIndex.drawer + 1,
-    color: "#fff",
-  },
-}));
-
-export default function Loading({ loading }) {
-  const classes = useStyles();
+export default function Loading() {
   return (
-    <Backdrop className={classes.backdrop} open={loading}>
-      <CircularProgress color="inherit" />
-    </Backdrop>
+    <div
+      style={{
+        width: "100%",
+        height: "75vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <CircularProgress color="primary" />
+    </div>
   );
 }

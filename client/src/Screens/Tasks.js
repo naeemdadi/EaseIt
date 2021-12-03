@@ -12,6 +12,8 @@ import {
 } from "@material-ui/icons";
 import AlertBox from "../Components/AlertBox";
 import { useHistory } from "react-router";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Tasks = () => {
   const { auth } = useAuth();
@@ -130,11 +132,11 @@ const Tasks = () => {
         );
         setTasks([...filteredTasks, res.data.updatedTask]);
       } catch (err) {
-        if (err.response && err.response.data.message) {
-          alert(err.response.data.message);
-        } else {
-          alert(err.message);
-        }
+        toast.error(
+          err.response && err.response.data.message
+            ? err.response.data.message
+            : err.message
+        );
       }
     }
   };
@@ -150,11 +152,11 @@ const Tasks = () => {
       setTasks(filterTasks);
       resolve();
     } catch (err) {
-      if (err.response && err.response.data.message) {
-        alert(err.response.data.message);
-      } else {
-        alert(err.message);
-      }
+      toast.error(
+        err.response && err.response.data.message
+          ? err.response.data.message
+          : err.message
+      );
       resolve();
     }
   };
@@ -176,17 +178,17 @@ const Tasks = () => {
       );
       setTasks([...filteredTasks, res.data.updatedTask]);
     } catch (err) {
-      if (err.response && err.response.data.message) {
-        alert(err.response.data.message);
-      } else {
-        alert(err.message);
-      }
+      toast.error(
+        err.response && err.response.data.message
+          ? err.response.data.message
+          : err.message
+      );
     }
     resolve();
   };
 
   if (loading) {
-    return <Loading loading={loading} />;
+    return <Loading />;
   } else if (error) {
     return <AlertBox severity="error" errorMessage={error} />;
   } else {
@@ -202,26 +204,29 @@ const Tasks = () => {
       );
     }
     return (
-      <MaterialTable
-        style={{ padding: "20px" }}
-        columns={columns}
-        icons={tableIcons}
-        data={tasks}
-        options={{ sorting: true, actionsColumnIndex: -1 }}
-        title="Tasks"
-        editable={
-          auth.role !== "employee" && {
-            onRowDelete: (oldData) =>
-              new Promise((resolve) => {
-                onDeleteHandler(oldData, resolve);
-              }),
-            onRowUpdate: (newData, oldData) =>
-              new Promise((resolve) =>
-                onTaskUpdateHandler(newData, oldData, resolve)
-              ),
+      <>
+        <ToastContainer />
+        <MaterialTable
+          style={{ padding: "20px" }}
+          columns={columns}
+          icons={tableIcons}
+          data={tasks}
+          options={{ sorting: true, actionsColumnIndex: -1 }}
+          title="Tasks"
+          editable={
+            auth.role !== "employee" && {
+              onRowDelete: (oldData) =>
+                new Promise((resolve) => {
+                  onDeleteHandler(oldData, resolve);
+                }),
+              onRowUpdate: (newData, oldData) =>
+                new Promise((resolve) =>
+                  onTaskUpdateHandler(newData, oldData, resolve)
+                ),
+            }
           }
-        }
-      />
+        />
+      </>
     );
   }
 };

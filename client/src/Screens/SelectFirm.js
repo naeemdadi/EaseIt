@@ -10,9 +10,10 @@ import {
 import { Autocomplete } from "@material-ui/lab";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "../Contexts/AuthContext";
 import { useOrg } from "../Contexts/OrgContaxt";
-// import socket from "../Socket";
+import "react-toastify/dist/ReactToastify.css";
 
 const useStyles = makeStyles((theme) => ({
   submit: {
@@ -51,7 +52,6 @@ const SelectFirm = () => {
 
     (async () => {
       const { data } = await axios.get("/api/company/list");
-      // await sleep(1e3); // For demo purposes.
 
       if (active) {
         setOptions(data.companiesList);
@@ -89,7 +89,11 @@ const SelectFirm = () => {
       handleClose();
     } catch (err) {
       setLoader(false);
-      alert(err.response.data.message);
+      toast.error(
+        err.response && err.response.data.message
+          ? err.response.data.message
+          : err.message
+      );
     }
   };
 
@@ -105,6 +109,7 @@ const SelectFirm = () => {
 
   return (
     <>
+      <ToastContainer />
       <Typography
         variant="h4"
         color="textSecondary"

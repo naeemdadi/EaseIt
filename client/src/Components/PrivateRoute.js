@@ -3,6 +3,7 @@ import { Route, Redirect } from "react-router-dom";
 import { useAuth } from "../Contexts/AuthContext";
 import { useOrg } from "../Contexts/OrgContaxt";
 import AlertBox from "./AlertBox";
+import Layout from "./Layout";
 import Loading from "./Loading";
 
 const SelectFirm = lazy(() => import("../Screens/SelectFirm.js"));
@@ -17,18 +18,24 @@ const PrivateRoute = ({ component: Component, restrict, ...rest }) => {
         if (auth && org) {
           if (restrict?.includes(auth.role)) {
             return (
-              <AlertBox
-                errorMessage="Sorry, You Are not authorized!"
-                severity="error"
-              />
+              <Layout>
+                <AlertBox
+                  errorMessage="Sorry, You Are not authorized!"
+                  severity="error"
+                />
+              </Layout>
             );
           } else {
-            return <Component {...props}></Component>;
+            return (
+              <Layout>
+                <Component {...props}></Component>
+              </Layout>
+            );
           }
         }
         if (auth && !org) {
           return (
-            <Suspense fallback={<Loading loading={true} />}>
+            <Suspense fallback={<Loading />}>
               <SelectFirm {...props} />
             </Suspense>
           );

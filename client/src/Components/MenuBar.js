@@ -46,7 +46,6 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up("sm")]: {
       display: "block",
     },
-    cursor: "pointer",
   },
 }));
 
@@ -96,7 +95,6 @@ export default function MenuBar({ handleDrawerOpen, open }) {
             variant="h5"
             color="inherit"
             noWrap
-            style={{ cursor: "pointer" }}
             className={classes.title}
           >
             {org.companyName}

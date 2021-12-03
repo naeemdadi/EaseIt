@@ -6,6 +6,8 @@ import { useAuth } from "../Contexts/AuthContext";
 import Loading from "../Components/Loading";
 import AlertBox from "../Components/AlertBox";
 import TaskDetails from "../Components/TaskDetails";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const NewTask = () => {
   const history = useHistory();
@@ -107,7 +109,7 @@ const NewTask = () => {
       );
       if (res.data) history.push("/");
     } catch (err) {
-      alert(
+      toast.error(
         err.response && err.response.data.message
           ? err.response.data.message
           : err.message
@@ -127,12 +129,13 @@ const NewTask = () => {
   }
 
   if (loading) {
-    return <Loading loading={loading} />;
+    return <Loading />;
   } else if (dataError) {
     return <AlertBox severity="error" errorMessage={dataError} />;
   } else {
     return (
       <>
+        <ToastContainer />
         <Typography
           variant="h6"
           color="textSecondary"

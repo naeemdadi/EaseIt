@@ -14,6 +14,8 @@ import { useHistory } from "react-router";
 import axios from "axios";
 import { CircularProgress } from "@material-ui/core";
 import AlertBox from "../Components/AlertBox";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -145,7 +147,7 @@ export default function SignUp() {
       history.push("/signin");
     } catch (err) {
       setLoading(false);
-      alert(
+      toast.error(
         err.response && err.response.data.message
           ? err.response.data.message
           : err.message
@@ -155,6 +157,7 @@ export default function SignUp() {
 
   return (
     <Container component="main" maxWidth="xs">
+      <ToastContainer />
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
