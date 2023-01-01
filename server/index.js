@@ -23,6 +23,7 @@ const isDomainAllowed = (origin, domains) => {
       isAllowed = true;
     }
   });
+  return isAllowed;
 }
 
 // Set up a whitelist and check against it:
