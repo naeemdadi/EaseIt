@@ -8,7 +8,7 @@ import { OrgProvider } from "./Contexts/OrgContaxt";
 import axios from "axios";
 
 // export const baseURL = "http://localhost:5000";
-export const baseURL = "https://easeit-api.herokuapp.com/";
+export const baseURL = "https://easeit-api.up.railway.app/";
 
 axios.defaults.baseURL = baseURL;
 

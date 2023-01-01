@@ -16,10 +16,20 @@ dotenv.config();
 const app = express();
 
 // Set up a whitelist and check against it:
-var allowlist = ["https://easeit.netlify.app"];
-var corsOptionsDelegate = function (req, callback) {
-  var corsOptions;
-  if (allowlist.indexOf(req.header("Origin")) !== -1) {
+const isDomainAllowed = (origin, domains) => {
+  let isAllowed = false;
+  domains?.forEach(domain => {
+    if (origin?.includes(domain)) {
+      isAllowed = true;
+    }
+  });
+}
+
+// Set up a whitelist and check against it:
+const corsOptionsDelegate = function (req, callback) {
+  const allowlist = ["easeit.netlify.app", "localhost"];
+  let corsOptions;
+  if (isDomainAllowed(req?.header('Origin'), allowlist)) {
     corsOptions = { origin: true, credentials: true }; // reflect (enable) the requested origin in the CORS response
   } else {
     corsOptions = { origin: false }; // disable CORS for this request
