@@ -7,10 +7,7 @@ import { AuthProvider } from "./Contexts/AuthContext";
 import { OrgProvider } from "./Contexts/OrgContaxt";
 import axios from "axios";
 
-// export const baseURL = "http://localhost:5000";
-export const baseURL = "https://easeit-api.up.railway.app/";
-
-axios.defaults.baseURL = baseURL;
+axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL;
 
 ReactDOM.render(
   <React.StrictMode>
