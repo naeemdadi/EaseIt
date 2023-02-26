@@ -18,19 +18,19 @@ const app = express();
 // Set up a whitelist and check against it:
 const isDomainAllowed = (origin, domains) => {
   let isAllowed = false;
-  domains?.forEach(domain => {
+  domains?.forEach((domain) => {
     if (origin?.includes(domain)) {
       isAllowed = true;
     }
   });
   return isAllowed;
-}
+};
 
 // Set up a whitelist and check against it:
 const corsOptionsDelegate = function (req, callback) {
   const allowlist = ["easeit.netlify.app", "localhost"];
   let corsOptions;
-  if (isDomainAllowed(req?.header('Origin'), allowlist)) {
+  if (isDomainAllowed(req?.header("Origin"), allowlist)) {
     corsOptions = { origin: true, credentials: true }; // reflect (enable) the requested origin in the CORS response
   } else {
     corsOptions = { origin: false }; // disable CORS for this request
@@ -72,7 +72,7 @@ const start = async () => {
 
     success({ message: `Connected with database`, badge: true });
 
-    const port = process.env.PORT || 5000;
+    const port = process.env.PORT || 9000;
 
     // Start a Server
     const server = app.listen(port, () =>

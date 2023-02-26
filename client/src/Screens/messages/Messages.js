@@ -7,7 +7,6 @@ import "./messages.css";
 import { io } from "socket.io-client";
 import { Container } from "@material-ui/core";
 import AlertBox from "../../Components/AlertBox";
-import { baseURL } from "../..";
 
 const Messages = (props) => {
   const [messages, setMessages] = useState([]);
@@ -21,7 +20,7 @@ const Messages = (props) => {
 
   const socket = useRef();
 
-  const ENDPOINT = baseURL;
+  const ENDPOINT = process.env.REACT_APP_API_BASE_URL;
 
   const currTask = props.location.state;
 
